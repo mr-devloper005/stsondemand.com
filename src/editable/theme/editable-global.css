@@ -15,6 +15,10 @@ body {
   background-color: var(--slot4-page-bg) !important;
   color: var(--slot4-page-text) !important;
   background-image: var(--slot4-body-gradient) !important;
+  --editable-container: 1160px;
+  --editable-border: rgba(31, 36, 28, 0.14);
+  --editable-page-bg: var(--slot4-page-bg);
+  --editable-page-text: var(--slot4-page-text);
 }
 
 ::selection {
@@ -41,4 +45,10 @@ body {
 
 .article-content a {
   color: var(--slot4-accent-fill);
+}
+
+input,
+textarea,
+select {
+  color: var(--slot4-page-text);
 }
