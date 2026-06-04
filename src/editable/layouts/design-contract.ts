@@ -1,23 +1,25 @@
 import type { CSSProperties } from 'react'
 
 export const editableRootStyle = {
-  '--slot4-page-bg': '#fff9f2',
-  '--slot4-page-text': '#111111',
-  '--slot4-panel-bg': '#fff3e8',
+  '--slot4-page-bg': '#f4f1e6',
+  '--slot4-page-text': '#1f241c',
+  '--slot4-panel-bg': '#fff7ed',
   '--slot4-surface-bg': '#ffffff',
-  '--slot4-muted-text': '#4f463f',
-  '--slot4-soft-muted-text': '#6b6258',
-  '--slot4-accent': '#ff6600',
-  '--slot4-accent-fill': '#ff6600',
-  '--slot4-accent-soft': '#d1e0ff',
-  '--slot4-dark-bg': '#111111',
+  '--slot4-muted-text': '#566052',
+  '--slot4-soft-muted-text': '#72796c',
+  '--slot4-accent': '#ff4a1f',
+  '--slot4-accent-fill': '#ff4a1f',
+  '--slot4-accent-soft': '#ffe5da',
+  '--slot4-secondary': '#a1062c',
+  '--slot4-success': '#08a65a',
+  '--slot4-dark-bg': '#252820',
   '--slot4-dark-text': '#ffffff',
-  '--slot4-media-bg': '#e9e2da',
-  '--slot4-cream': '#fdf1e5',
-  '--slot4-warm': '#fff9f2',
-  '--slot4-lavender': '#d1e0ff',
-  '--slot4-gray': '#f6f6f6',
-  '--slot4-body-gradient': 'linear-gradient(180deg, #fdf1e5 0%, #fff9f2 38%, #f6f6f6 100%)',
+  '--slot4-media-bg': '#e9e3d5',
+  '--slot4-cream': '#fff3e5',
+  '--slot4-warm': '#f4f1e6',
+  '--slot4-lavender': '#fff7ed',
+  '--slot4-gray': '#f8f7f2',
+  '--slot4-body-gradient': 'linear-gradient(180deg, #fff3e5 0%, #f4f1e6 44%, #f8f7f2 100%)',
 } as CSSProperties
 
 export const editablePalette = {
@@ -50,7 +52,7 @@ export const editablePalette = {
 export const editableDesignContract = {
   shell: {
     page: `min-h-screen ${editablePalette.pageBg} ${editablePalette.pageText}`,
-    section: 'mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8',
+    section: 'mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8',
     sectionY: 'py-14 sm:py-16 lg:py-20',
   },
   layout: {

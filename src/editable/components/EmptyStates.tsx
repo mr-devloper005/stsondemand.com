@@ -12,7 +12,7 @@ type EmptyStateProps = {
 
 export function EmptyState({
   title = 'Nothing published here yet',
-  description = 'Fresh posts will appear here automatically once this section has published content.',
+  description = 'Fresh business listings will appear here automatically once this section has published content.',
   actionLabel = 'Back to home',
   actionHref = '/',
   className,
@@ -32,7 +32,7 @@ export function EmptyState({
   )
 }
 
-export function TaskEmptyState({ taskLabel = 'posts', className }: { taskLabel?: string; className?: string }) {
+export function TaskEmptyState({ taskLabel = 'listings', className }: { taskLabel?: string; className?: string }) {
   return (
     <EmptyState
       className={className}

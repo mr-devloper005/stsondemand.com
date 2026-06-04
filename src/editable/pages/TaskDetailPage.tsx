@@ -61,7 +61,13 @@ const escapeHtml = (value: string) => value
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;')
 
-const safeUrl = (value: string) => /^https?:\/\//i.test(value) ? value : '#'
+const safeUrl = (value: string) => {
+  const trimmed = value.trim()
+  if (!trimmed) return '#'
+  if (/^https?:\/\//i.test(trimmed)) return trimmed
+  if (/^[\w.-]+\.[a-z]{2,}/i.test(trimmed)) return `https://${trimmed}`
+  return '#'
+}
 
 const linkifyMarkdown = (value: string) => value
   .replace(/\[([^\]]+)]\((https?:\/\/[^\s)]+)\)/gi, (_match, label, url) => `<a href="${safeUrl(url)}" target="_blank" rel="nofollow noopener noreferrer">${label}</a>`)
@@ -127,7 +133,7 @@ function BackLink({ task }: { task: TaskKey }) {
   const taskConfig = getTaskConfig(task)
   return (
     <Link href={taskConfig?.route || '/'} className="inline-flex items-center gap-2 rounded-full border border-[var(--editable-border)] bg-white/70 px-4 py-2 text-sm font-black">
-      <ArrowLeft className="h-4 w-4" /> Back to {taskConfig?.label || 'posts'}
+      <ArrowLeft className="h-4 w-4" /> Back to {taskConfig?.label || 'listings'}
     </Link>
   )
 }
@@ -158,21 +164,46 @@ function ListingDetail({ post, related }: { post: SitePost; related: SitePost[] 
   const website = getField(post, ['website', 'url'])
   const mapSrc = mapSrcFor(post)
   return (
-    <section className="mx-auto max-w-[var(--editable-container)] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
-      <BackLink task="listing" />
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
-        <article className="rounded-[2.8rem] border border-[var(--editable-border)] bg-white p-6 shadow-[0_30px_90px_rgba(15,23,42,0.09)] sm:p-9">
-          <div className="grid gap-6 sm:grid-cols-[150px_1fr]">
-            <div className="flex h-36 w-36 items-center justify-center overflow-hidden rounded-[2rem] bg-[var(--detail-bg)] ring-1 ring-[var(--editable-border)]">
-              {logo ? <img src={logo} alt="" className="h-full w-full object-cover" /> : <Building2 className="h-14 w-14 opacity-40" />}
-            </div>
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.28em] text-[var(--detail-accent)]">Business listing</p>
-              <h1 className="mt-3 text-4xl font-black leading-[0.98] tracking-[-0.07em] sm:text-6xl">{post.title}</h1>
-              <p className="mt-5 max-w-3xl text-base leading-8 opacity-70">{summaryText(post)}</p>
+    <section className="mx-auto max-w-[var(--editable-container)] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <div className="overflow-hidden rounded-xl border border-[var(--editable-border)] bg-white shadow-[0_22px_70px_rgba(31,36,28,0.10)]">
+        <div className="bg-[#a1062c] px-4 py-2 text-xs font-black text-white">
+          Home &gt; Businesses &gt; {post.title}
+        </div>
+        <div className="relative min-h-[290px] bg-[#252820] p-5 text-white sm:p-8">
+          {logo ? <img src={logo} alt="" className="absolute inset-0 h-full w-full object-cover opacity-42" /> : null}
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(37,40,32,0.92),rgba(37,40,32,0.42))]" />
+          <div className="relative z-10 flex min-h-[230px] flex-col justify-between gap-8">
+            <BackLink task="listing" />
+            <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
+              <div>
+                <p className="inline-flex items-center gap-2 rounded-full bg-[#08a65a] px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-white"><CheckCircle2 className="h-4 w-4" /> Business listing</p>
+                <h1 className="mt-4 max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.04em] sm:text-5xl">{post.title}</h1>
+                
+              </div>
+              <div className="grid gap-2 text-sm font-black md:text-right">
+                {phone ? <a href={`tel:${phone}`} className="inline-flex items-center gap-2 md:justify-end"><Phone className="h-4 w-4" /> {phone}</a> : null}
+                {website ? <Link href={safeUrl(website)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 md:justify-end"><Globe2 className="h-4 w-4" /> Visit website</Link> : null}
+                {address ? <span className="inline-flex items-center gap-2 md:justify-end"><MapPin className="h-4 w-4" /> {address}</span> : null}
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <article className="rounded-xl border border-[var(--editable-border)] bg-white p-6 shadow-sm sm:p-8">
+          <div className="flex flex-wrap justify-center gap-2 border-b border-[var(--editable-border)] pb-5">
+            {['Business lead generation', 'Add business listing', 'Local search engine', 'Business review platform', 'Profile management'].map((chip) => (
+              <Link key={chip} href={`/search?q=${encodeURIComponent(chip)}`} className="rounded-full border border-[var(--editable-border)] px-3 py-1.5 text-sm font-black text-[#3158e8]">{chip}</Link>
+            ))}
+          </div>
           <InfoGrid items={[['Location', address, MapPin], ['Phone', phone, Phone], ['Email', email, Mail], ['Website', website, Globe2]]} />
+          <div className="mt-6 flex flex-wrap gap-3">
+            {phone ? <a href={`tel:${phone}`} className="rounded-md bg-[#ff4a1f] px-4 py-2 text-sm font-black text-white">Call business</a> : null}
+            {website ? <Link href={safeUrl(website)} target="_blank" rel="noreferrer" className="rounded-md bg-[#252820] px-4 py-2 text-sm font-black text-white">Open website</Link> : null}
+            {mapSrc ? <a href={`https://maps.google.com/?q=${encodeURIComponent(address || post.title)}`} target="_blank" rel="noreferrer" className="rounded-md border border-[var(--editable-border)] px-4 py-2 text-sm font-black">Show map</a> : null}
+            {email ? <a href={`mailto:${email}`} className="rounded-md border border-[var(--editable-border)] px-4 py-2 text-sm font-black">Message business</a> : null}
+          </div>
           <BodyContent post={post} />
           <ImageStrip images={images.slice(1)} label="Business showcase" />
         </article>
@@ -229,7 +260,7 @@ function ImageDetail({ post, related }: { post: SitePost; related: SitePost[] })
         <aside className="rounded-[2.5rem] border border-[var(--editable-border)] bg-white p-7 lg:sticky lg:top-24 lg:self-start">
           <div className="inline-flex items-center gap-2 rounded-full bg-[var(--detail-text)] px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-[var(--detail-bg)]"><Camera className="h-4 w-4" /> Image story</div>
           <h1 className="mt-6 text-4xl font-black leading-[0.98] tracking-[-0.07em] sm:text-5xl">{post.title}</h1>
-          <p className="mt-5 text-base leading-8 opacity-70">{summaryText(post)}</p>
+          
           <BodyContent post={post} compact />
         </aside>
         <div className="columns-1 gap-5 space-y-5 md:columns-2">
@@ -254,7 +285,7 @@ function BookmarkDetail({ post, related }: { post: SitePost; related: SitePost[]
         <BackLink task="sbm" />
         <div className="mt-10 flex h-20 w-20 items-center justify-center rounded-[2rem] bg-[var(--detail-text)] text-[var(--detail-bg)]"><Bookmark className="h-9 w-9" /></div>
         <h1 className="mt-7 text-4xl font-black leading-[0.98] tracking-[-0.07em] sm:text-6xl">{post.title}</h1>
-        <p className="mt-5 max-w-3xl text-lg leading-9 opacity-70">{summaryText(post)}</p>
+   
         {website ? <Link href={website} target="_blank" rel="noreferrer" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--detail-text)] px-5 py-3 text-sm font-black text-[var(--detail-bg)]">Open saved resource <ExternalLink className="h-4 w-4" /></Link> : null}
         <BodyContent post={post} />
       </article>
@@ -385,7 +416,6 @@ function RelatedPanel({ task, post, related, compact = false }: { task: TaskKey;
           <div className="mt-4 grid gap-3 text-sm font-bold opacity-75">
             <p className="inline-flex items-center gap-2"><Tag className="h-4 w-4" /> Task: {taskConfig?.label || task}</p>
             <p className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Site: {SITE_CONFIG.name}</p>
-            {post.publishedAt ? <p>Published: {new Date(post.publishedAt).toLocaleDateString()}</p> : null}
           </div>
         </div>
       ) : null}
