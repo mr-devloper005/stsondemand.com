@@ -56,7 +56,7 @@ function pageHref(basePath: string, category: string, page: number) {
 
 const taskDeck: Record<TaskKey, { icon: typeof FileText; archiveClass: string; promise: string; badge: string }> = {
   article: { icon: FileText, archiveClass: 'grid gap-5 md:grid-cols-2 xl:grid-cols-3', promise: 'Readable editorial cards with room for headlines and excerpts.', badge: 'Read' },
-  listing: { icon: Building2, archiveClass: 'grid gap-5 xl:grid-cols-2', promise: 'Directory cards highlight company identity, location, contacts, and service details.', badge: 'Business' },
+  listing: { icon: Building2, archiveClass: 'grid gap-4', promise: 'Directory cards highlight company identity, location, contact options, and service details.', badge: 'Business' },
   classified: { icon: Megaphone, archiveClass: 'grid gap-5 xl:grid-cols-2', promise: 'Offer-board cards prioritize price, location, condition, and quick action.', badge: 'Offer' },
   image: { icon: Camera, archiveClass: 'columns-1 gap-5 space-y-5 md:columns-2 xl:columns-3', promise: 'Gallery-first browsing with strong visuals and compact captions.', badge: 'Gallery' },
   sbm: { icon: Bookmark, archiveClass: 'grid gap-4 md:grid-cols-2 xl:grid-cols-3', promise: 'Bookmark cards stay mostly text-based so saved resources scan quickly.', badge: 'Bookmark' },
@@ -103,7 +103,7 @@ export function TaskArchiveView({ task, posts, pagination, category, basePath }:
             <div className="mt-6 rounded-[1.5rem] border border-[var(--editable-border)] bg-white/55 p-4 text-sm font-bold leading-7 opacity-75">{deck.promise}</div>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href={basePath} className="rounded-full bg-[var(--archive-text)] px-5 py-3 text-sm font-black text-[var(--archive-bg)]">Browse all</Link>
-              <Link href="/search" className="rounded-full border border-[var(--editable-border)] px-5 py-3 text-sm font-black">Search posts</Link>
+              <Link href="/search" className="rounded-full border border-[var(--editable-border)] px-5 py-3 text-sm font-black">Search businesses</Link>
             </div>
           </div>
 
@@ -126,8 +126,8 @@ export function TaskArchiveView({ task, posts, pagination, category, basePath }:
           ) : (
             <div className="rounded-[2rem] border border-dashed border-[var(--editable-border)] bg-white/60 p-10 text-center">
               <Search className="mx-auto h-8 w-8 opacity-45" />
-              <h2 className="mt-4 text-3xl font-black tracking-[-0.05em]">No posts found</h2>
-              <p className="mt-2 text-sm opacity-65">Try another category or refresh this page after publishing new content.</p>
+              <h2 className="mt-4 text-3xl font-black tracking-[-0.05em]">No businesses found</h2>
+              <p className="mt-2 text-sm opacity-65">Try another category or check back after new listings are published.</p>
             </div>
           )}
 
@@ -177,21 +177,24 @@ function ListingArchiveCard({ post, href }: { post: SitePost; href: string }) {
   const phone = getField(post, ['phone', 'telephone', 'mobile'])
   const website = getField(post, ['website', 'url'])
   return (
-    <Link href={href} className="group grid gap-5 rounded-[2rem] border border-[var(--editable-border)] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl sm:grid-cols-[120px_1fr]">
-      <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-[1.5rem] bg-[var(--archive-bg)] ring-1 ring-[var(--editable-border)]">
+    <Link href={href} className="group grid gap-4 border-b border-[var(--editable-border)] bg-white p-5 transition hover:bg-[#fff7ed] sm:grid-cols-[112px_1fr_auto]">
+      <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl bg-[var(--archive-bg)] ring-1 ring-[var(--editable-border)]">
         {logo ? <img src={logo} alt="" className="h-full w-full object-cover" /> : <BriefcaseBusiness className="h-10 w-10 opacity-45" />}
       </div>
       <div className="min-w-0">
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-[var(--archive-text)] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--archive-bg)]">Directory</span>
+          <span className="rounded-full bg-[#08a65a] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white">Verified style profile</span>
           {location ? <span className="inline-flex items-center gap-1 rounded-full border border-[var(--editable-border)] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em]"><MapPin className="h-3 w-3" /> {location}</span> : null}
         </div>
-        <h2 className="mt-4 text-2xl font-black leading-tight tracking-[-0.05em]">{post.title}</h2>
+        <h2 className="mt-3 text-xl font-black leading-tight tracking-[-0.03em] text-[#3158e8]">{post.title}</h2>
         <p className="mt-3 line-clamp-2 text-sm leading-6 opacity-65">{getSummary(post)}</p>
-        <div className="mt-4 grid gap-2 text-xs font-bold opacity-70 sm:grid-cols-2">
+        <div className="mt-4 flex flex-wrap gap-3 text-xs font-bold opacity-70">
           {phone ? <span>Phone: {phone}</span> : null}
           {website ? <span>Website available</span> : null}
         </div>
+      </div>
+      <div className="flex items-end sm:justify-end">
+        <span className="inline-flex items-center gap-2 rounded-md bg-[#ff4a1f] px-4 py-2 text-sm font-black text-white">View profile <ArrowRight className="h-4 w-4" /></span>
       </div>
     </Link>
   )
