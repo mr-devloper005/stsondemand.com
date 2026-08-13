@@ -20,17 +20,24 @@ export async function generateMetadata(): Promise<Metadata> {
   })
 }
 
-const stripHtml = (value: string) => value.replace(/<[^>]*>/g, ' ')
-const compactText = (value: unknown) => typeof value === 'string' ? stripHtml(value).replace(/\s+/g, ' ').trim().toLowerCase() : ''
+const HTML_ENTITIES: Record<string, string> = {
+  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
+  ndash: '–', mdash: '—', bull: '•', hellip: '…',
+  lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”',
+}
+const decodeEntities = (value: string) => value.replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16))).replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec))).replace(/&([a-z]+);/gi, (m, name) => HTML_ENTITIES[name.toLowerCase()] ?? m)
+const stripHtml = (value: string) => value.replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/gi, ' ').replace(/<!--[\s\S]*?-->/g, ' ').replace(/<[^>]*>/g, ' ')
+const plainText = (value: unknown, limit = 0) => { if (typeof value !== 'string') return ''; const text = decodeEntities(stripHtml(value)).replace(/\s+/g, ' ').trim(); return limit > 0 && text.length > limit ? text.slice(0, limit) + '…' : text }
+const compactText = (value: unknown) => plainText(value).toLowerCase()
 const getContent = (post: SitePost) => post.content && typeof post.content === 'object' ? post.content as Record<string, unknown> : {}
+const asText = (value: unknown) => typeof value === 'string' ? value.trim() : ''
 const getImage = (post: SitePost) => {
   const content = getContent(post)
   const media = Array.isArray(post.media) ? post.media.find((item) => typeof item?.url === 'string')?.url : ''
   const images = Array.isArray(content.images) ? content.images.find((item) => typeof item === 'string') as string | undefined : ''
-  return media || compactRaw(content.featuredImage) || compactRaw(content.image) || compactRaw(content.thumbnail) || images || ''
+  return media || asText(content.featuredImage) || asText(content.image) || asText(content.thumbnail) || images || ''
 }
-const compactRaw = (value: unknown) => typeof value === 'string' ? value.trim() : ''
-const summaryOf = (post: SitePost) => post.summary || compactRaw(getContent(post).description) || compactRaw(getContent(post).excerpt) || ''
+const summaryOf = (post: SitePost) => plainText(post.summary) || plainText(getContent(post).description) || plainText(getContent(post).excerpt) || ''
 
 const matches = (post: SitePost, query: string, category: string, task: string) => {
   const content = getContent(post)
@@ -64,9 +71,9 @@ function SearchResultCard({ post, index }: { post: SitePost; index: number }) {
         </div>
       ) : null}
       <div className="p-5 sm:p-6">
-        {!image ? <span className="rounded-full bg-[var(--editable-page-text,#211713)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-white">{taskLabel}</span> : null}
-        <h2 className="mt-4 line-clamp-3 text-2xl font-black leading-[0.95] tracking-[-0.06em] text-[var(--editable-page-text,#211713)]">{post.title}</h2>
-        {summary ? <p className="mt-4 line-clamp-3 text-sm font-semibold leading-7 text-[var(--editable-page-text,#211713)]/65">{summary}</p> : null}
+        {!image ? <span className="rounded-full bg-[var(--editable-page-text)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-white">{taskLabel}</span> : null}
+        <h2 className="mt-4 line-clamp-3 text-2xl font-black leading-[0.95] tracking-[-0.06em] text-[var(--editable-page-text)]">{post.title}</h2>
+        {summary ? <p className="mt-4 line-clamp-3 text-sm font-semibold leading-7 text-[var(--editable-page-text)]/65">{summary}</p> : null}
         <span className="mt-5 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] opacity-60 group-hover:opacity-100">Open business <ArrowRight className="h-4 w-4" /></span>
       </div>
     </Link>
@@ -87,7 +94,7 @@ export default async function SearchPage({ searchParams }: { searchParams?: Prom
 
   return (
     <EditableSiteShell>
-      <main className="min-h-screen bg-[var(--editable-page-bg,#fff7ee)] text-[var(--editable-page-text,#2f1d16)]">
+      <main className="min-h-screen bg-[var(--editable-page-bg)] text-[var(--editable-page-text)]">
         <section className="mx-auto max-w-[var(--editable-container)] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
           <div className="grid gap-8 rounded-xl border border-[var(--editable-border)] bg-white p-6 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur md:grid-cols-[0.8fr_1.2fr] lg:p-10">
             <div>

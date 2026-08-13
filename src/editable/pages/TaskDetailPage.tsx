@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Bookmark, Building2, Camera, CheckCircle2, Download, ExternalLink, FileText, Globe2, Mail, MapPin, MessageCircle, Phone, Tag, UserRound } from 'lucide-react'
+import { ArrowLeft, Bookmark, Camera, CheckCircle2, Download, ExternalLink, FileText, Globe2, Mail, MapPin, MessageCircle, Phone, Tag, UserRound } from 'lucide-react'
 import { buildPostMetadata, buildTaskMetadata } from '@/lib/seo'
 import { buildPostUrl, fetchArticleComments, fetchTaskPostBySlug, fetchTaskPosts } from '@/lib/task-data'
 import { getTaskConfig, SITE_CONFIG, type TaskKey } from '@/lib/site-config'
@@ -28,6 +28,14 @@ export async function EditableTaskDetailRoute({ task, params }: { task: TaskKey;
   return <TaskDetailView task={task} post={post} related={related} comments={comments} />
 }
 
+const HTML_ENTITIES: Record<string, string> = {
+  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
+  ndash: '–', mdash: '—', bull: '•', hellip: '…',
+  lsquo: "‘", rsquo: "’", ldquo: "“", rdquo: "”",
+}
+const decodeEntities = (value: string) => value.replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16))).replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec))).replace(/&([a-z]+);/gi, (m, name) => HTML_ENTITIES[name.toLowerCase()] ?? m)
+const stripHtmlTags = (value: string) => value.replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/gi, ' ').replace(/<!--[\s\S]*?-->/g, ' ').replace(/<[^>]*>/g, ' ')
+const plainText = (value: unknown, limit = 0) => { if (typeof value !== 'string') return ''; const text = decodeEntities(stripHtmlTags(value)).replace(/\s+/g, ' ').trim(); return limit > 0 && text.length > limit ? text.slice(0, limit) + '…' : text }
 const getContent = (post: SitePost) => post.content && typeof post.content === 'object' ? post.content as Record<string, unknown> : {}
 const asText = (value: unknown) => typeof value === 'string' ? value.trim() : ''
 const isUrl = (value: string) => value.startsWith('/') || /^https?:\/\//i.test(value)
@@ -99,8 +107,8 @@ const formatPlainText = (raw: string) => {
     .join('')
 }
 
-const summaryText = (post: SitePost) => post.summary || asText(getContent(post).description) || asText(getContent(post).excerpt) || ''
-const categoryOf = (post: SitePost, fallback: string) => asText(getContent(post).category) || post.tags?.[0] || fallback
+const summaryText = (post: SitePost) => plainText(post.summary) || plainText(getContent(post).description) || plainText(getContent(post).excerpt) || ''
+const categoryOf = (post: SitePost, fallback: string) => plainText(getContent(post).category, 60) || post.tags?.[0] || fallback
 const mapSrcFor = (post: SitePost) => {
   const address = getField(post, ['address', 'location', 'city'])
   const lat = getField(post, ['lat', 'latitude'])
@@ -194,7 +202,7 @@ function ListingDetail({ post, related }: { post: SitePost; related: SitePost[] 
         <article className="rounded-xl border border-[var(--editable-border)] bg-white p-6 shadow-sm sm:p-8">
           <div className="flex flex-wrap justify-center gap-2 border-b border-[var(--editable-border)] pb-5">
             {['Business lead generation', 'Add business listing', 'Local search engine', 'Business review platform', 'Profile management'].map((chip) => (
-              <Link key={chip} href={`/search?q=${encodeURIComponent(chip)}`} className="rounded-full border border-[var(--editable-border)] px-3 py-1.5 text-sm font-black text-[#3158e8]">{chip}</Link>
+              <Link key={chip} href={`/search?q=${encodeURIComponent(chip)}`} className="rounded-full border border-[var(--editable-border)] px-3 py-1.5 text-sm font-black text-[#ff4a1f]">{chip}</Link>
             ))}
           </div>
           <InfoGrid items={[['Location', address, MapPin], ['Phone', phone, Phone], ['Email', email, Mail], ['Website', website, Globe2]]} />
@@ -406,7 +414,7 @@ function BadgeLine({ label, value }: { label: string; value: string }) {
   return <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm"><span className="font-black uppercase tracking-[0.16em] opacity-60">{label}</span><span className="font-black">{value}</span></div>
 }
 
-function RelatedPanel({ task, post, related, compact = false }: { task: TaskKey; post: SitePost; related: SitePost[]; compact?: boolean }) {
+function RelatedPanel({ task, related, compact = false }: { task: TaskKey; post?: SitePost; related: SitePost[]; compact?: boolean }) {
   const taskConfig = getTaskConfig(task)
   return (
     <aside className="min-w-0 space-y-5">

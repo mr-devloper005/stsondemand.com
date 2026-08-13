@@ -3,7 +3,7 @@
 import { useMemo, useState, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, Search, UserPlus, LogIn, X, PlusCircle, MapPin, LogOut, UserCircle2 } from 'lucide-react'
+import { Menu, Search, UserPlus, LogIn, X, PlusCircle, LogOut, UserCircle2 } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
 import { globalContent } from '@/editable/content/global.content'
 import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
@@ -38,8 +38,8 @@ export function EditableNavbar() {
 
         <form action="/search" className="mx-auto hidden min-w-0 flex-1 justify-center md:flex">
           <label className="relative flex w-full max-w-[470px] items-center overflow-hidden rounded-md border border-white/25 bg-[var(--editable-search-bg)] text-[#252820] shadow-sm">
-            <Search className="ml-3 h-4 w-4 text-[#6f7669]" />
-            <input name="q" type="search" placeholder="Look for a business..." className="min-w-0 flex-1 bg-transparent px-2 py-2.5 text-sm font-semibold outline-none placeholder:text-[#6f7669]" />
+            <Search className="ml-3 h-4 w-4 text-[#72796c]" />
+            <input name="q" type="search" placeholder="Look for a business..." className="min-w-0 flex-1 bg-transparent px-2 py-2.5 text-sm font-semibold outline-none placeholder:text-[#72796c]" />
             
             <button className="h-10 bg-[#252820] px-5 text-xs font-black uppercase tracking-[0.12em] text-white">Find</button>
           </label>
