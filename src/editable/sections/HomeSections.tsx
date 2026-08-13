@@ -53,7 +53,7 @@ function FeatureTile({ post, href, index }: { post: SitePost; href: string; inde
   const style = index % 3
   if (style === 0) {
     return (
-      <Link href={href} className="group relative min-h-[360px] overflow-hidden rounded-[2rem] bg-[#24150f] p-5 text-white shadow-[0_24px_70px_rgba(47,29,22,0.18)] transition duration-300 hover:-translate-y-1">
+      <Link href={href} className="group relative min-h-[360px] overflow-hidden rounded-[2rem] bg-[#252820] p-5 text-white shadow-[0_24px_70px_rgba(47,29,22,0.18)] transition duration-300 hover:-translate-y-1">
         <img src={getEditablePostImage(post)} alt={post.title} className="absolute inset-0 h-full w-full object-cover opacity-70 transition duration-700 group-hover:scale-105" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.05),rgba(0,0,0,0.78))]" />
         <div className="relative z-10 flex min-h-[320px] flex-col justify-end">
@@ -141,12 +141,12 @@ export function EditableHomeHero({ primaryTask, primaryRoute }: HomeSectionProps
           <p className={`mt-5 max-w-xl text-base leading-8 ${pal.mutedText}`}>{pagesContent.home.hero.description}</p>
           <form action="/search" className="mt-8 grid overflow-hidden rounded-md border border-black/10 bg-white shadow-[0_18px_50px_rgba(31,36,28,0.10)] sm:grid-cols-[1fr_0.82fr_auto]">
             <label className="flex min-w-0 items-center gap-2 border-b border-black/10 px-4 py-3 sm:border-b-0 sm:border-r">
-              <Search className="h-5 w-5 text-[#6f7669]" />
-              <input name="q" placeholder={pagesContent.home.hero.searchPlaceholder} className="min-w-0 flex-1 bg-transparent text-sm font-bold outline-none placeholder:text-[#6f7669]" />
+              <Search className="h-5 w-5 text-[#72796c]" />
+              <input name="q" placeholder={pagesContent.home.hero.searchPlaceholder} className="min-w-0 flex-1 bg-transparent text-sm font-bold outline-none placeholder:text-[#72796c]" />
             </label>
             <label className="flex min-w-0 items-center gap-2 border-b border-black/10 px-4 py-3 sm:border-b-0 sm:border-r">
-              <MapPin className="h-5 w-5 text-[#6f7669]" />
-              <input name="category" placeholder="City, state, or category" className="min-w-0 flex-1 bg-transparent text-sm font-bold outline-none placeholder:text-[#6f7669]" />
+              <MapPin className="h-5 w-5 text-[#72796c]" />
+              <input name="category" placeholder="City, state, or category" className="min-w-0 flex-1 bg-transparent text-sm font-bold outline-none placeholder:text-[#72796c]" />
             </label>
             <button className="bg-[#ff4a1f] px-7 py-3 text-sm font-black uppercase tracking-[0.12em] text-white">Find</button>
           </form>
